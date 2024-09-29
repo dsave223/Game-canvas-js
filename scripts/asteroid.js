@@ -38,7 +38,7 @@ export class Asteroid{
         }
     }
 
-    generateAsteroid(canvas){
+    generatePosition(canvas){
         let num = Math.floor(Math.random() * (4)) + 1;
         let x, y;
 

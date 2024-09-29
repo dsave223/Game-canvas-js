@@ -1,4 +1,5 @@
 import { Asteroid } from "./asteroid.js";
+import { Enemy } from "./enemy.js";
 import { Label } from "./label.js";
 import { Ship } from "./ship.js";
 
@@ -10,6 +11,7 @@ const ship = new Ship(ctx, spritesheet, canvas);
 
 const asteroids = [];
 const labels = [];
+const enemys = [];
 
 const font = window.getComputedStyle(document.body).fontFamily;
 const fontWeith = window.getComputedStyle(document.body).fontWeight;
@@ -24,11 +26,19 @@ function background(){
     ctx.fillRect(0, 0, canvas.width, canvas.height );
 }
 
+function generateEnemys() {
+    setInterval(() => {
+        let enemy = new Enemy(ctx, spritesheet, canvas, ship);
+        enemy.generatePosition(canvas);
+        enemys.push(enemy);
+    }, 7000);
+}
+
 function generateAsteroids() {
     setInterval(() => {
         let type = Math.floor(Math.random()* (2)) + 1;
         let asteroid = new Asteroid(ctx, spritesheet, {x:0, y:0}, type);
-        asteroid.generateAsteroid(canvas);
+        asteroid.generatePosition(canvas);
         asteroids.push(asteroid);
         setTimeout(() => {
             asteroid.death = true
@@ -111,7 +121,10 @@ function updateObject() {
         if(label.opacity<=0){
             labels.splice(i, 1);
         }
-    })
+    });
+    enemys.forEach((enemy) =>{
+        enemy.update(hitBox);
+    });
 }
 
 function update() {
@@ -124,5 +137,6 @@ function update() {
 
 update();
 generateAsteroids();
+generateEnemys();
 
 

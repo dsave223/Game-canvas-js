@@ -15,9 +15,9 @@ export class Projectile{
 
         this.ctx.translate(this.position.x,  this.position.y);
         this.ctx.rotate(this.angle);
-        this.ctx.translate(-this.position.x, -this.position.y)
+        this.ctx.translate(-this.position.x, -this.position.y);
         this.image.draw(this.ctx, this.position);
-        this.imageEff.draw(this.ctx, {x:this.position.x, y:this.position.y+25})
+        this.imageEff.draw(this.ctx, {x:this.position.x, y:this.position.y+25});
 
         this.ctx.restore();
     }
