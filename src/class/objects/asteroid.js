@@ -1,19 +1,21 @@
-import { Object } from "./object.js";
+import { Object } from "../object.js";
+import { checkCanvasCollision } from "../../utils/collision.js";
 
 export class Asteroid{
-    constructor(ctx, spritesheet, position={x:0, y:0}, type=1){
+    constructor(ctx, spritesheet, canvas, position={x:0, y:0}, type=1){
         this.ctx =  ctx;
         this.spritesheet = spritesheet;
+        this.canvas = canvas;
         this.position = {...position};
         this.rotation = 0;
         this.death = false;
         this.image = new Object();
         this.type = type;
         this.scale = Math.random() * (0.8 - 0.4) + 0.4;
-        this.speed = Math.random() * (3 - 1) + 3;
+        this.speed = Math.random() * (1 - 0.5) + 2;
         if(this.type === 3){
             this.scale = Math.random() * (0.3 - 0.2) + 0.2;
-            this.speed = Math.random() * (4 - 3) + 3;
+            this.speed = Math.random() * (2 - 1) + 2;
         }
         this.angle = (Math.random() * (360)) * Math.PI/180;
         this.createAsteroid();
@@ -63,15 +65,8 @@ export class Asteroid{
         this.position = {x:x, y:y};
     }
 
-    collision(canvas){
-        if((this.position.x - this.image.radio > canvas.width || 
-            this.position.x + this.image.radio < 0 ||
-            this.position.y - this.image.radio > canvas.height ||
-            this.position.y + this.image.radio < 0) && this.death
-        ){
-            return true;
-        }
-        return false;
+    collision() {
+        return checkCanvasCollision(this, canvas);
     }
 
     hitBox(){
@@ -101,5 +96,6 @@ export class Asteroid{
         this.position.x += Math.cos(this.angle)* this.speed;
         this.position.y += Math.sin(this.angle)* this.speed;
         this.rotation += 0.015;
+        this.collision()
     }
 }

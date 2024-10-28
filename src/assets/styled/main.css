@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat+Alternates:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+html, body{
+    font-weight: 700;
+    font-family: "Montserrat Alternates", sans-serif;
+    width: 100%;
+    height: 100%;
+    background-color: #242739;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.game{
+    position: relative;
+    color: white;
+}
+
+.menu{
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    animation: menu-animation 7s infinite;
+}
+
+@keyframes menu-animation{
+    0%{
+        transform: translateY(-1%);
+    }
+    50%{
+        transform: translateY(1%);
+    }
+    100%{
+        transform: translateY(-1%);
+    }
+}
+
+h2{
+    font-size: 3.5rem;
+    margin: 5%;
+}
+
+.play-game{
+    border: 0.3vh solid white;
+    cursor: pointer;
+}
+
+.play-game:hover ion-icon{
+    margin: 1vh 2.7vh;
+}
+
+.menu ion-icon{
+    font-size: 6vh;
+    margin: 1vh;
+    justify-content: center;
+    align-items: center;
+    transition: margin 0.5s ease;
+}
+
+.score-container{
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 1.2vh;
+    font-size: 1.8rem;
+    font-weight: 600;
+    opacity: 0.7;
+}

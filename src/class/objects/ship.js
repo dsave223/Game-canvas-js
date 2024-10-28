@@ -1,4 +1,4 @@
-import { Object } from "./object.js";
+import { Object } from "../object.js";
 import { Projectile } from "./projectile.js";
 
 export class Ship{
@@ -6,35 +6,25 @@ export class Ship{
         this.ctx = ctx;
         this.spritesheet = spritesheet
         this.image = new Object(spritesheet,{x:442, y:193}, 126, 107, 0.4);
+        this.canvas = canvas;
+        this.canvasWidth = canvas.width;
+        this.canvasHeight = canvas.height;
         this.imageEff = new Object(spritesheet, {x:1113, y:458},  16, 126, 0.4);
+        this.reset();
+        this.keyboard();
+    }
+
+    reset(){
         this.position = {x:200, y:200};
         this.speed = 0;
         this.projectiles = [];
-        this.canvas = canvas;
         this.keys = {
             A:false,
             D:false,
             W:false,
             shoot:true
         }
-        this.angle = 0
-        this.keyboard();
-    }
-
-    collisionCanvas(){
-        if(this.position.x - this.image.radio > this.canvas.width){
-            this.position.x = 0;
-        }
-        if(this.position.x + this.image.radio < 0){
-            this.position.x = this.canvas.width;
-        }
-
-        if(this.position.y - this.image.radio > this.canvas.height){
-            this.position.y = 0;
-        }
-        if(this.position.y + this.image.radio < 0){
-            this.position.y = this.canvas.height;
-        }
+        this.angle = 0;
     }
 
     draw(){
@@ -51,6 +41,22 @@ export class Ship{
         }
 
         this.ctx.restore();
+    }
+
+    collisionCanvas(){
+        if(this.position.x - this.image.radio > this.canvas.width){
+            this.position.x = 0;
+        }
+        if(this.position.x + this.image.radio < 0){
+            this.position.x = this.canvas.width;
+        }
+    
+        if(this.position.y - this.image.radio > this.canvas.height){
+            this.position.y = 0;
+        }
+        if(this.position.y + this.image.radio < 0){
+            this.position.y = this.canvas.height;
+        }
     }
 
     move(){

@@ -1,14 +1,20 @@
-import { Object } from "./object.js";
+import { Object } from "../object.js";
+import { Projectile } from "./projectile.js";
+import { checkCanvasCollision } from "../../utils/collision.js";
 
 export class Enemy{
     constructor(ctx, spritesheet, canvas, ship){
         this.ctx = ctx;
+        this.spritesheet = spritesheet;
         this.image = new Object(spritesheet, {x:662, y:-1}, 94, 148, 0.4);
         this.canvas = canvas;
         this.ship = ship;
         this.position = {x:500 , y:200};
         this.imagePart = new Object(spritesheet, {x:998, y:273}, 36, 76, 0.52);
         this.speed = 1;
+        this.death = false;
+        this.lastShotTime = 0;
+        this.shootCooldown = 3000;
     }
 
     draw(){
@@ -33,6 +39,10 @@ export class Enemy{
         this.ctx.restore();
     }
 
+    collision(canvas){
+        return checkCanvasCollision(this, canvas);
+    }
+
     hitBox(){
         this.ctx.beginPath();
         this.ctx.arc(this.position.x, this.position.y, this.image.radio, 0, 2 * Math.PI);
@@ -41,17 +51,33 @@ export class Enemy{
         this.ctx.stroke();
     }
 
-    createProyectile(){
-        
-        new Projectile(
-            this.ctx,
-            this.spritesheet,
-            {x: this.position.x + Math.cos(this.angle) * 14,
-                y: this.position.y + Math.sin(this.angle) * 14
+    canShoot() {
+        return Date.now() - this.lastShotTime > this.shootCooldown;
+    }
 
-            },
-            this.angle
-        )
+    createProjectile(projectiles) {
+        if (this.canShoot()) {
+            // Calcula el ángulo base para los tres proyectiles
+            let baseAngle = this.angle + Math.PI/2;
+            
+            // Crea tres proyectiles con ángulos ligeramente diferentes
+            for (let i = 0; i < 3; i++) {
+                let angleOffset = (i - 1) * Math.PI / 18; // -10 grados, 0 grados, +10 grados
+                let projectile = new Projectile(
+                    this.ctx,
+                    this.spritesheet,
+                    {
+                        x: this.position.x + Math.cos(baseAngle) * 14,
+                        y: this.position.y + Math.sin(baseAngle) * 14
+                    },
+                    baseAngle + angleOffset,
+                    true
+                );
+                projectile.speed = 4;
+                projectiles.push(projectile);   
+            }
+            this.lastShotTime = Date.now(); // Actualiza el tiempo del último disparo
+        }
     }
 
     generatePosition(canvas){
@@ -79,10 +105,6 @@ export class Enemy{
         this.position = {x:x, y:y};
     }
 
-    collision(){
-        
-    }
-
     update(boolean){
         this.draw();
         if(boolean) this.hitBox();
@@ -100,6 +122,5 @@ export class Enemy{
         this.position.x += vU.x *  this.speed;
 
         this.position.y += vU.y *  this.speed;
-
     }
 }
