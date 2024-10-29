@@ -15,5 +15,5 @@ canvas.width  = 900;
 canvas.height = 600;
 
 btnMenu.addEventListener( "click",()=>{
-    init();
+    init(ctx, spritesheet, canvas, menu, score,  font, fontWeith);
 })

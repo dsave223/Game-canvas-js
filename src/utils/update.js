@@ -1,10 +1,11 @@
+import { Label } from "../class/atmosphere/label.js";
 
-export function updateShipEnemy(params) {
+export function updateShipEnemy(labels, ship, enemy) {
     setTimeout(() => {
-        let text = new Label(ctx, "+20 puntos", enemys[j].position, "#36AAE9", fontWeith, font );
+        let text = new Label(ctx, "+20 puntos", enemy.position, "#36AAE9", fontWeith, font );
         labels.push(text);
-        ship.projectiles.splice(i,1);
-        enemys.splice(j,1);
+        ship.splice(i,1);
+        enemy.splice(j,1);
         scoreCount += 20;
         score.innerHTML = scoreCount;
     }, 0);
