@@ -1,5 +1,5 @@
 import { Object } from "../object.js";
-import { Projectile } from "./projectile.js";
+import { Projectile } from "../objectSpace/projectile.js";
 
 export class Ship{
     constructor(ctx, spritesheet, canvas){
@@ -12,10 +12,14 @@ export class Ship{
         this.imageEff = new Object(spritesheet, {x:1113, y:458},  16, 126, 0.4);
         this.reset();
         this.keyboard();
+        this.projectileWorker = new Worker('./src/class/ships/workers/ship/projectileWorker.js');
+        this.lastShotTime = 0;
+        this.shotCooldown = 250;
+        this.setupProjectileWorker();
     }
 
     reset(){
-        this.position = {x:200, y:200};
+        this.position = { x: 450, y: 290 };
         this.speed = 0;
         this.projectiles = [];
         this.keys = {
@@ -66,7 +70,6 @@ export class Ship{
         if (this.keys.A){
             this.angle-=0.06;
         }
-
         if (this.keys.W){
             this.speed+=0.09;
             if (this.speed >= 4.5){
@@ -112,6 +115,22 @@ export class Ship{
         });
     }
 
+    setupProjectileWorker() {
+        this.projectileWorker.onmessage = (e) => {
+            const projectileData = e.data;
+            projectileData.forEach(data => {
+                this.projectiles.push(
+                    new Projectile(
+                        this.ctx,
+                        this.spritesheet,
+                        { x: data.x, y: data.y },
+                        data.angle
+                    )
+                );
+            });
+        };
+    }
+
     keyboard(){
         document.addEventListener('keydown', (e)=>{
             if (e.key ===  'a'  || e.key === 'A'){
@@ -124,30 +143,18 @@ export class Ship{
                 this.keys.W = true;
             }
 
-            if(e.key === 'g'  || e.key === 'G'){
-                if(this.keys.shoot){
-                    this.projectiles.push(
-                        new Projectile(
-                            this.ctx,
-                            this.spritesheet,
-                            {x: this.position.x + Math.cos(this.angle) * 14,
-                                y: this.position.y + Math.sin(this.angle) * 14
-    
-                            },
-                            this.angle
-                        ),
-                        new Projectile(
-                            this.ctx,
-                            this.spritesheet,
-                            {x: this.position.x - Math.cos(this.angle) * 15,
-                                y: this.position.y - Math.sin(this.angle) * 15
-    
-                            },
-                            this.angle
-                        )
-                    );
+            if(e.key === 'g' || e.key === 'G'){
+                const currentTime = Date.now();
+                if(this.keys.shoot && currentTime - this.lastShotTime >= this.shotCooldown){
+                    this.projectileWorker.postMessage({
+                        position: this.position,
+                        angle: this.angle,
+                        timestamp: currentTime
+                    });
+                    
+                    this.lastShotTime = currentTime;
+                    this.keys.shoot = false;
                 }
-                this.keys.shoot = false;
             }
 
         });
@@ -166,5 +173,16 @@ export class Ship{
                 this.keys.shoot = true;
             }
         });
+    }
+
+    updateProjectile(boolean){
+        for(let i = this.projectiles.length - 1; i >= 0; i--) {
+            const projectile = this.projectiles[i];
+            projectile.update(boolean);
+            
+            if(projectile.collision(this.canvas)){
+                this.projectiles.splice(i, 1);
+            }
+        }
     }
 }

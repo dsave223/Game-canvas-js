@@ -1,5 +1,4 @@
 import { Object } from "../object.js";
-import { checkProjectileCanvasCollision } from "../../utils/collision.js";
 
 export class Projectile{
     constructor(ctx, spritesheet, position, angle, type){
@@ -27,7 +26,15 @@ export class Projectile{
     }
     
     collision(canvas) {
-        return checkProjectileCanvasCollision(this, canvas);
+        if(
+            this.position.x - this.image.radio > canvas.width || 
+            this.position.x + this.image.radio < 0 ||
+            this.position.y - this.image.radio > canvas.height ||
+            this.position.y + this.image.radio < 0
+        ){
+            return true;
+        }
+        return false;
     }
 
     update(boolean){

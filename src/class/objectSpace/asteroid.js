@@ -1,5 +1,4 @@
 import { Object } from "../object.js";
-import { checkCanvasCollision } from "../../utils/collision.js";
 
 export class Asteroid{
     constructor(ctx, spritesheet, canvas, position={x:0, y:0}, type=1){
@@ -66,7 +65,14 @@ export class Asteroid{
     }
 
     collision() {
-        return checkCanvasCollision(this, canvas);
+        if((this.position.x - this.image.radio > canvas.width ||
+            this.position.x + this.image.radio < 0 ||
+            this.position.y - this.image.radio > canvas.height ||
+            this.position.y + this.image.radio < 0) && this.death
+        ){
+            return true;
+        }
+        return false;
     }
 
     hitBox(){
