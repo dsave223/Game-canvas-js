@@ -22,16 +22,18 @@ canvas.width  = 900;
 canvas.height = 600;
 
 const ship = new Ship(ctx, spritesheet, canvas);
-const asteroids = [];
+const stars = [];
 const labels = [];
 const enemys = [];
+const asteroids = [];
 const projectilesEnemys = [];
-const stars = [];
 
 let hitBox = false;
 let menuStatus = true;
 let play = false;
 let scoreCount = 0;
+let enemyWorker;
+let asteroidWorker;
 
 btnMenu.addEventListener("click", init);
 
@@ -50,11 +52,12 @@ function init() {
     play = true;
     scoreCount = 0;
     score.innerHTML = scoreCount;
+}
 
+function workers() {
+    setupWorkers();
     if (enemyWorker) enemyWorker.terminate();
     if (asteroidWorker) asteroidWorker.terminate();
-    
-    setupWorkers();
 }
 
 function background() {
@@ -91,9 +94,6 @@ function createStars(){
         stars.push(star);
     }
 }
-
-let enemyWorker;
-let asteroidWorker;
 
 function setupWorkers() {
     enemyWorker = new Worker('./src/workers/enemyWorker.js');
@@ -225,4 +225,4 @@ function gameOver() {
 
 update();
 createStars();
-setupWorkers();
+workers();

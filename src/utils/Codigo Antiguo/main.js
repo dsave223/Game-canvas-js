@@ -1,8 +1,8 @@
-import { Asteroid } from "./class/objectSpace/asteroid.js";
-import { Enemy } from "./class/ships/enemy.js";
-import { Label } from "./class/atmosphere/label.js";
-import { Ship } from "./class/ships/ship.js";
-import { Star } from "./class/atmosphere/star.js";
+import { Asteroid } from "../../class/objectSpace/asteroid.js";
+import { Enemy } from "../../class/ships/enemy.js";
+import { Label } from "../../class/atmosphere/label.js";
+import { Ship } from "../../class/ships/ship.js";
+import { Star } from "../../class/atmosphere/star.js";
 
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
