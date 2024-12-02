@@ -3,7 +3,6 @@ import { Ship } from "./class/ships/ship.js";
 import { Asteroid } from "./class/objectSpace/asteroid.js";
 import { Enemy } from "./class/ships/enemy.js";
 import { Star } from "./class/atmosphere/star.js";
-
 import { collision } from "./utils/collision/collision.js";
 import { updateObject } from "./utils/update/updateObject.js";
 
@@ -22,6 +21,7 @@ canvas.width  = 900;
 canvas.height = 600;
 
 const ship = new Ship(ctx, spritesheet, canvas);
+
 const stars = [];
 const labels = [];
 const enemys = [];
@@ -43,10 +43,9 @@ function init() {
     labels.length = 0;
     enemys.length = 0;
     projectilesEnemys.length = 0;
-    ship.position = {x: 200,y: 200};
     ship.projectiles.length = 0;
-    ship.angle = 0;
-    ship.speed = 0;
+    ship.reset();
+    ship.setGameActive(true);
     menu.style.display = "none";
     menuStatus =  false;
     play = true;
@@ -55,9 +54,9 @@ function init() {
 }
 
 function workers() {
-    setupWorkers();
     if (enemyWorker) enemyWorker.terminate();
     if (asteroidWorker) asteroidWorker.terminate();
+    setupWorkers();
 }
 
 function background() {
@@ -96,8 +95,8 @@ function createStars(){
 }
 
 function setupWorkers() {
-    enemyWorker = new Worker('./src/workers/enemyWorker.js');
-    asteroidWorker = new Worker('./src/workers/asteroidWorker.js');
+    enemyWorker = new Worker('./src/utils/workers/enemyWorker.js');
+    asteroidWorker = new Worker('./src/utils/workers/asteroidWorker.js');
     
     enemyWorker.onmessage = function(e) {
         if (e.data === 'generateEnemy') {
@@ -217,6 +216,8 @@ function update() {
 function gameOver() {
     hitBox = true;
     play = false;
+    ship.setGameActive(false);
+    ship.playExplosionSound();
     setTimeout(() => {
         menu.style.display = "flex";
         menuStatus = true;

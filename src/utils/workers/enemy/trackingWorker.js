@@ -1,3 +1,4 @@
+// src/utils/workers/enemy/trackingWorker.js
 self.onmessage = function(e) {
     const { enemyPosition, shipPosition, speed, maxSpeed } = e.data;
         
@@ -9,6 +10,11 @@ self.onmessage = function(e) {
     
     // Calcular magnitud (distancia al objetivo)
     const distance = Math.sqrt(v1.x * v1.x + v1.y * v1.y);
+    
+    // Evitar división por cero
+    if (distance === 0) {
+        return; // No se mueve si está en la misma posición
+    }
     
     // Calcular vector unitario
     const vU = {

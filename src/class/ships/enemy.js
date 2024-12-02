@@ -28,8 +28,8 @@ export class Enemy {
 
     // Métodos de inicialización
     initializeWorkers() {
-        this.projectileWorker = new Worker('./src/class/ships/workers/enemy/projectileWorker.js');
-        this.trackingWorker = new Worker('./src/class/ships/workers/enemy/trackingWorker.js');
+        this.projectileWorker = new Worker('./src/utils/workers/enemy/projectileWorker.js');
+        this.trackingWorker = new Worker('./src/utils/workers/enemy/trackingWorker.js');
         this.setupProjectileWorker();
         this.setupTrackingWorker();
     }

@@ -10,11 +10,13 @@ export class Ship{
         this.canvasWidth = canvas.width;
         this.canvasHeight = canvas.height;
         this.imageEff = new Object(spritesheet, {x:1113, y:458},  16, 126, 0.4);
-        this.reset();
-        this.keyboard();
-        this.projectileWorker = new Worker('./src/class/ships/workers/ship/projectileWorker.js');
         this.lastShotTime = 0;
         this.shotCooldown = 250;
+        this.projectileWorker = new Worker('./src/utils/workers/ship/projectileWorker.js');
+        this.isGameActive = false;
+        this.reset();
+        this.keyboard();
+        this.initAudio();
         this.setupProjectileWorker();
     }
 
@@ -102,6 +104,7 @@ export class Ship{
         }
         this.move();
         this.collisionCanvas();
+    
     }
 
     updateProjectile(boolean){
@@ -145,7 +148,8 @@ export class Ship{
 
             if(e.key === 'g' || e.key === 'G'){
                 const currentTime = Date.now();
-                if(this.keys.shoot && currentTime - this.lastShotTime >= this.shotCooldown){
+                if(this.keys.shoot && currentTime - this.lastShotTime >= this.shotCooldown && this.isGameActive){
+                    this.playShootSound();
                     this.projectileWorker.postMessage({
                         position: this.position,
                         angle: this.angle,
@@ -159,6 +163,8 @@ export class Ship{
 
         });
         document.addEventListener('keyup', (e)=>{
+            if (!this.isGameActive) return;
+            
             if (e.key ===  'a'  || e.key === 'A'){
                 this.keys.A = false;
             }
@@ -173,6 +179,52 @@ export class Ship{
                 this.keys.shoot = true;
             }
         });
+    }
+
+    initAudio() {
+        this.shootSound = new Audio();
+        this.shootSound.src = './src/assets/musica/biogun.mp3';
+        this.shootSound.volume = 0.3;
+
+        this.explosionSound = new Audio();
+        this.explosionSound.src = './src/assets/musica/explosion.wav';
+        this.explosionSound.volume = 0.4;
+    }
+
+    playShootSound() {
+        if (!this.shootSound) return;
+        
+        try {
+            const soundClone = this.shootSound.cloneNode();
+            if (soundClone) {
+                soundClone.volume = 0.3;
+                soundClone.play().catch(error => {
+                    console.error('Error al reproducir el sonido:', error);
+                });
+            }
+        } catch (error) {
+            console.error('Error al reproducir el sonido:', error);
+        }
+    }
+
+    playExplosionSound() {
+        if (!this.explosionSound) return;
+        
+        try {
+            const soundClone = this.explosionSound.cloneNode();
+            if (soundClone) {
+                soundClone.volume = this.explosionSound.volume;
+                soundClone.play().catch(error => {
+                    console.error('Error al reproducir el sonido de explosión:', error);
+                });
+            }
+        } catch (error) {
+            console.error('Error al reproducir el sonido de explosión:', error);
+        }
+    }
+
+    setGameActive(status) {
+        this.isGameActive = status;
     }
 
     updateProjectile(boolean){
